@@ -10,12 +10,12 @@ public class D2SaveFileDirectoryBrowser {
 	private D2SaveFileDirectoryBrowser() {
 
 	}
-	
-	public static List<File> returnCharFileList(File directory) throws IOException{
+
+	public static List<File> returnCharFileList(File directory) throws IOException {
 		if (!directory.isDirectory()) {
 			return null;
 		}
-		
+
 		List<File> ret = new ArrayList<File>();
 		File[] files = directory.listFiles();
 		if (files != null) {
@@ -23,9 +23,9 @@ public class D2SaveFileDirectoryBrowser {
 				if (file.isFile() && file.getName().toLowerCase().endsWith(".d2s")) {
 					ret.add(file);
 				}
-            }
-        }
+			}
+		}
 		return ret;
-		
+
 	}
 }

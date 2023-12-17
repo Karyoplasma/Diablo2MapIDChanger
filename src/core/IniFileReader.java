@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class IniFileReader {
-	
+
 	private File iniFile;
 	private Map<String, String> settings;
-	
+
 	public IniFileReader(File iniFile) {
 		this.iniFile = iniFile;
 		if (iniFile.exists()) {
@@ -24,7 +24,7 @@ public class IniFileReader {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(this.iniFile));
 			String in;
-			
+
 			while (!((in = reader.readLine()) == null)) {
 				String[] inSplit = in.split("=");
 				if (inSplit.length != 2) {

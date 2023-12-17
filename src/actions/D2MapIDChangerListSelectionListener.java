@@ -9,9 +9,9 @@ import core.D2CharFile;
 import gui.Diablo2MapChanger;
 
 public class D2MapIDChangerListSelectionListener implements ListSelectionListener {
-	
+
 	private Diablo2MapChanger gui;
-	
+
 	public D2MapIDChangerListSelectionListener(Diablo2MapChanger diablo2MapChanger) {
 		super();
 		this.gui = diablo2MapChanger;
@@ -21,14 +21,15 @@ public class D2MapIDChangerListSelectionListener implements ListSelectionListene
 	public void valueChanged(ListSelectionEvent e) {
 		@SuppressWarnings("unchecked")
 		JList<D2CharFile> source = (JList<D2CharFile>) e.getSource();
-        if(!e.getValueIsAdjusting()){
-	    	try {
+		if (!e.getValueIsAdjusting()) {
+			try {
 				this.gui.getTextAreaCharacterSummary().setText(source.getSelectedValue().getCharacterSummary());
 			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(this.gui.getFrame(), "Could not parse character data.", "Data error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this.gui.getFrame(), "Could not parse character data.", "Data error",
+						JOptionPane.ERROR_MESSAGE);
 				e1.printStackTrace();
 			}
-	    }
+		}
 	}
 
 }

@@ -15,7 +15,7 @@ public class IniFileWriter {
 	public static boolean createDefaultIniFile() {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("D2MapChanger.ini")));
-			
+
 			writer.write("SavePath=");
 			writer.newLine();
 			writer.write("AutoBackup=1");
@@ -31,7 +31,7 @@ public class IniFileWriter {
 	public static boolean writeNewIniFile(Diablo2MapChanger gui) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("D2MapChanger.ini")));
-			
+
 			writer.write("SavePath=");
 			writer.write(gui.getSavePathString());
 			writer.newLine();
@@ -43,7 +43,7 @@ public class IniFileWriter {
 			return false;
 		}
 		return true;
-		
+
 	}
 
 }
