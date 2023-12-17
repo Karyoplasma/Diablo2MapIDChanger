@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,8 +18,8 @@ public class SelectButtonAction extends AbstractAction {
 	private static final long serialVersionUID = -758467460481123570L;
 	private Diablo2MapChanger gui;
 
-	public SelectButtonAction(String name, Diablo2MapChanger diablo2MapChanger) {
-		super(name);
+	public SelectButtonAction(Diablo2MapChanger diablo2MapChanger) {
+		putValue(Action.NAME, "Select");
 		this.gui = diablo2MapChanger;
 	}
 

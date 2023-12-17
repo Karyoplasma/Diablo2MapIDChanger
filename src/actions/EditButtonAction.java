@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 import core.D2CharFile;
 import gui.Diablo2MapChanger;
@@ -16,8 +17,8 @@ public class EditButtonAction extends AbstractAction {
 	private static final long serialVersionUID = 1084211109110931223L;
 	private Diablo2MapChanger gui;
 
-	public EditButtonAction(String name, Diablo2MapChanger diablo2MapChanger) {
-		super(name);
+	public EditButtonAction(Diablo2MapChanger diablo2MapChanger) {
+		putValue(Action.NAME, "Change map ID");
 		this.gui = diablo2MapChanger;
 	}
 

@@ -95,7 +95,7 @@ public class Diablo2MapChanger {
 		lblSavePath.setFont(new Font("Tahoma", Font.BOLD, 14));
 		frmDsMapidChanger.getContentPane().add(lblSavePath, "cell 1 4");
 
-		btnSelect = new JButton(new SelectButtonAction("Select", this));
+		btnSelect = new JButton(new SelectButtonAction(this));
 		btnSelect.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		frmDsMapidChanger.getContentPane().add(btnSelect, "flowx,cell 2 4");
 
@@ -107,7 +107,7 @@ public class Diablo2MapChanger {
 		JPanel panelEditButton = new JPanel();
 		frmDsMapidChanger.getContentPane().add(panelEditButton, "cell 2 3");
 
-		JButton btnEdit = new JButton(new EditButtonAction("Change map ID", this));
+		JButton btnEdit = new JButton(new EditButtonAction(this));
 		panelEditButton.add(btnEdit);
 		btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
