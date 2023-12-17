@@ -13,7 +13,7 @@ import core.IniFileWriter;
 import gui.Diablo2MapChanger;
 
 public class SelectButtonAction extends AbstractAction {
-	
+
 	private static final long serialVersionUID = -758467460481123570L;
 	private Diablo2MapChanger gui;
 
@@ -26,19 +26,20 @@ public class SelectButtonAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		String directory = this.gui.getSavePathString();
 		JFileChooser fileChooser = new JFileChooser(directory);
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("D2S Files", "d2s");
-	    
-	    fileChooser.setFileFilter(filter);
-        int result = fileChooser.showOpenDialog(null);
-        	if (result == JFileChooser.APPROVE_OPTION) {
-	           File selectedFile = fileChooser.getSelectedFile();
-	           if (selectedFile.getName().toLowerCase().endsWith(".d2s")) {
-	                this.fileSelected(selectedFile);
-	            } else {
-	                System.out.println("Please select a file ending with '.d2s'.");
-	                JOptionPane.showMessageDialog(this.gui.getFrame(), "Please select a Diablo 2 character file.", "Wrong file type", JOptionPane.WARNING_MESSAGE);
-	            }
-	        }
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("D2S Files", "d2s");
+
+		fileChooser.setFileFilter(filter);
+		int result = fileChooser.showOpenDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			if (selectedFile.getName().toLowerCase().endsWith(".d2s")) {
+				this.fileSelected(selectedFile);
+			} else {
+				System.out.println("Please select a file ending with '.d2s'.");
+				JOptionPane.showMessageDialog(this.gui.getFrame(), "Please select a Diablo 2 character file.",
+						"Wrong file type", JOptionPane.WARNING_MESSAGE);
+			}
+		}
 	}
 
 	private void fileSelected(File selectedFile) {
@@ -52,25 +53,27 @@ public class SelectButtonAction extends AbstractAction {
 					if (file.isFile() && file.getName().toLowerCase().endsWith(".d2s")) {
 						try {
 							D2CharFile charFile = new D2CharFile(file);
-							((DefaultListModel<D2CharFile>) this.gui.getListCharacterList().getModel()).addElement(charFile);
+							((DefaultListModel<D2CharFile>) this.gui.getListCharacterList().getModel())
+									.addElement(charFile);
 							if (file.equals(selectedFile)) {
 								this.gui.getListCharacterList().setSelectedIndex(index);
 							}
-							index++;						
+							index++;
 						} catch (IOException e) {
-							JOptionPane.showMessageDialog(this.gui.getFrame(), "Error when parsing the character files.", "File error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(this.gui.getFrame(),
+									"Error when parsing the character files.", "File error", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 							return;
 						}
 					}
-	            }
-	        }
-	    }
+				}
+			}
+		}
 		if (!IniFileWriter.writeNewIniFile(this.gui)) {
-			JOptionPane.showMessageDialog(this.gui.getFrame(), "Error when saving your settings. Default settings have not been changed.", "Ini write error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this.gui.getFrame(),
+					"Error when saving your settings. Default settings have not been changed.", "Ini write error",
+					JOptionPane.ERROR_MESSAGE);
 
 		}
-	}		
+	}
 }
-
-

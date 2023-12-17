@@ -15,7 +15,7 @@ public class EditButtonAction extends AbstractAction {
 
 	private static final long serialVersionUID = 1084211109110931223L;
 	private Diablo2MapChanger gui;
-	
+
 	public EditButtonAction(String name, Diablo2MapChanger diablo2MapChanger) {
 		super(name);
 		this.gui = diablo2MapChanger;
@@ -28,62 +28,70 @@ public class EditButtonAction extends AbstractAction {
 		if (newMapSeed != null) {
 			if (selectedCharFile != null) {
 				if (this.gui.getChckbxAutoBackup().isSelected()) {
-					if (this.backupCharacter(selectedCharFile.getFile())){
-						if(selectedCharFile.replaceMapID(newMapSeed)) {
+					if (this.backupCharacter(selectedCharFile.getFile())) {
+						if (selectedCharFile.replaceMapID(newMapSeed)) {
 							try {
 								this.gui.getTextAreaCharacterSummary().setText(selectedCharFile.getCharacterSummary());
 							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(gui.getFrame(), "This should never happen. If it does, let me know!");
+								JOptionPane.showMessageDialog(gui.getFrame(),
+										"This should never happen. If it does, let me know!");
 							}
-							JOptionPane.showMessageDialog(gui.getFrame(), "Map ID change successful.", "Success", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(gui.getFrame(), "Map ID change successful.", "Success",
+									JOptionPane.INFORMATION_MESSAGE);
 						} else {
-							JOptionPane.showMessageDialog(gui.getFrame(), "Map ID change failed.", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(gui.getFrame(), "Map ID change failed.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
-						JOptionPane.showMessageDialog(gui.getFrame(), "Backup failed. No files have been changed.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(gui.getFrame(), "Backup failed. No files have been changed.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
 		}
 	}
-	
-	private Integer getNewMapSeed() {
-        String userInput = JOptionPane.showInputDialog("Enter a new map seed.\nYou can enter a hex string by prefixing with \"0x\":");
-        if (userInput == null) {
-            return  null;
-        }
 
-        try {
-            if (userInput.startsWith("0x") || userInput.startsWith("0X")) {
-                return Integer.parseUnsignedInt(userInput.substring(2).trim(), 16);
-            } else {
-                return Integer.parseUnsignedInt(userInput.trim());
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid seed.", "Error", JOptionPane.ERROR_MESSAGE);
-            return getNewMapSeed();
-        }
-    }
-	
+	private Integer getNewMapSeed() {
+		String userInput = JOptionPane
+				.showInputDialog("Enter a new map seed.\nYou can enter a hex string by prefixing with \"0x\":");
+		if (userInput == null) {
+			return null;
+		}
+
+		try {
+			if (userInput.startsWith("0x") || userInput.startsWith("0X")) {
+				return Integer.parseUnsignedInt(userInput.substring(2).trim(), 16);
+			} else {
+				return Integer.parseUnsignedInt(userInput.trim());
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this.gui.getFrame(), "Invalid input. Please enter a valid seed.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return getNewMapSeed();
+		}
+	}
+
 	private boolean backupCharacter(File characterFile) {
-        if (!characterFile.exists()) {
-            return false;
-        }
-        File parentDirectory = characterFile.getParentFile();
-        File backupFolder = new File(parentDirectory, "backupMapIDChanger");
-        if (!backupFolder.exists() && !backupFolder.mkdir()) {
-        	JOptionPane.showMessageDialog(gui.getFrame(), "Failed to create backup folder. Please create a folder within your save folder and name it \"backupMapIDChanger\".", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        File backupFile = new File(backupFolder, characterFile.getName() + "_" + Instant.now().getEpochSecond());
-        try {
-            // Copy the character file to the backup file
-            Path sourcePath = characterFile.toPath();
-            Path destinationPath = backupFile.toPath();
-            Files.copy(sourcePath, destinationPath);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
+		if (!characterFile.exists()) {
+			return false;
+		}
+		File parentDirectory = characterFile.getParentFile();
+		File backupFolder = new File(parentDirectory, "backupMapIDChanger");
+		if (!backupFolder.exists() && !backupFolder.mkdir()) {
+			JOptionPane.showMessageDialog(gui.getFrame(),
+					"Failed to create backup folder. Please create a folder within your save folder and name it \"backupMapIDChanger\".",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		File backupFile = new File(backupFolder, characterFile.getName() + "_" + Instant.now().getEpochSecond());
+		try {
+			// Copy the character file to the backup file
+			Path sourcePath = characterFile.toPath();
+			Path destinationPath = backupFile.toPath();
+			Files.copy(sourcePath, destinationPath);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
 }
