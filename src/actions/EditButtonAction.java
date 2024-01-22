@@ -60,6 +60,9 @@ public class EditButtonAction extends AbstractAction {
 		}
 
 		try {
+			if (userInput.startsWith("-")) {
+				return Integer.parseInt(userInput.trim());
+			}
 			if (userInput.startsWith("0x") || userInput.startsWith("0X")) {
 				return Integer.parseUnsignedInt(userInput.substring(2).trim(), 16);
 			} else {

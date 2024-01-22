@@ -22,6 +22,10 @@ public class D2MapIDChangerListSelectionListener implements ListSelectionListene
 		@SuppressWarnings("unchecked")
 		JList<D2CharFile> source = (JList<D2CharFile>) e.getSource();
 		if (!e.getValueIsAdjusting()) {
+			if (source.getSelectedValue() == null) {
+				this.gui.getTextAreaCharacterSummary().setText("");
+				return;
+			}
 			try {
 				this.gui.getTextAreaCharacterSummary().setText(source.getSelectedValue().getCharacterSummary());
 			} catch (IOException e1) {

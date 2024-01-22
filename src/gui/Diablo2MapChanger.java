@@ -131,6 +131,7 @@ public class Diablo2MapChanger {
 			try {
 				D2CharFile charFile = new D2CharFile(file);
 				((DefaultListModel<D2CharFile>) this.listCharacterList.getModel()).addElement(charFile);
+				
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(this.frmDsMapidChanger, "Error when parsing character files.",
 						"Parse error", JOptionPane.ERROR_MESSAGE);

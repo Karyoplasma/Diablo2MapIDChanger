@@ -44,6 +44,7 @@ public class SelectButtonAction extends AbstractAction {
 	}
 
 	private void fileSelected(File selectedFile) {
+		((DefaultListModel<D2CharFile>) this.gui.getListCharacterList().getModel()).clear();
 		this.gui.setSavePath(selectedFile.getParentFile().getAbsolutePath());
 		this.gui.getLblSavePath().setText(selectedFile.getParentFile().getAbsolutePath());
 		int index = 0;
@@ -70,6 +71,7 @@ public class SelectButtonAction extends AbstractAction {
 				}
 			}
 		}
+		
 		if (!IniFileWriter.writeNewIniFile(this.gui)) {
 			JOptionPane.showMessageDialog(this.gui.getFrame(),
 					"Error when saving your settings. Default settings have not been changed.", "Ini write error",
