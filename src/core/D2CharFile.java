@@ -2,8 +2,10 @@ package core;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 public class D2CharFile {
 
@@ -13,13 +15,136 @@ public class D2CharFile {
 
 	public D2CharFile(File charFile) throws IOException {
 		this.charFile = charFile;
-		D2CharFileParser parser = new D2CharFileParser(charFile);
-		this.level = parser.getCharacterLevel();
-		this.mapID = parser.getMapID();
-		this.name = parser.getCharacterName();
-		this.charClass = parser.getCharacterClass();
-		this.difficulty = parser.getCharacterDifficulty();
-		this.checksum = parser.getChecksum();
+		this.setCharacterInfo();
+	}
+
+	private void setCharacterInfo() {
+		ByteBuffer buffer = this.readCharacterInformation();
+
+		if (buffer == null) {
+			throw new NullPointerException("Cannot read character file.");
+		}
+
+		byte[] nameBytes = new byte[16];
+		buffer.get(nameBytes);
+		this.name = new String(nameBytes).trim();
+
+		this.charClass = this.getCharClass(buffer.get());
+
+		this.level = (int) buffer.get();
+
+		byte[] difficultyBytes = new byte[3];
+		buffer.get(difficultyBytes);
+		this.difficulty = this.getDifficulty(difficultyBytes);
+
+		this.mapID = buffer.getInt();
+
+		this.checksum = buffer.getInt();
+	}
+
+	private ByteBuffer readCharacterInformation() {
+		ByteBuffer buffer = ByteBuffer.allocate(29);
+		try (FileChannel fileChannel = FileChannel.open(this.charFile.toPath(), StandardOpenOption.READ)) {
+			fileChannel.position(20L);
+			ByteBuffer nameBuffer = ByteBuffer.allocate(16);
+			fileChannel.read(nameBuffer);
+			nameBuffer.flip();
+			buffer.put(nameBuffer);
+
+			fileChannel.position(40L);
+			ByteBuffer classBuffer = ByteBuffer.allocate(1);
+			fileChannel.read(classBuffer);
+			classBuffer.flip();
+			buffer.put(classBuffer);
+
+			fileChannel.position(43L);
+			ByteBuffer levelBuffer = ByteBuffer.allocate(1);
+			fileChannel.read(levelBuffer);
+			levelBuffer.flip();
+			buffer.put(levelBuffer);
+
+			fileChannel.position(168L);
+			ByteBuffer difficultyBuffer = ByteBuffer.allocate(3);
+			fileChannel.read(difficultyBuffer);
+			difficultyBuffer.flip();
+			buffer.put(difficultyBuffer);
+
+			fileChannel.position(171L);
+			ByteBuffer mapBuffer = ByteBuffer.allocate(4);
+			fileChannel.read(mapBuffer);
+			mapBuffer.flip();
+			buffer.put(mapBuffer);
+
+			fileChannel.position(12L);
+			ByteBuffer checksumBuffer = ByteBuffer.allocate(4);
+			fileChannel.read(checksumBuffer);
+			checksumBuffer.flip();
+			buffer.put(checksumBuffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		buffer.flip();
+		return buffer;
+	}
+
+	private String getCharClass(byte classByte) {
+		switch (classByte) {
+		case 0:
+			return "Amazon";
+		case 1:
+			return "Sorceress";
+		case 2:
+			return "Necromancer";
+		case 3:
+			return "Paladin";
+		case 4:
+			return "Barbarian";
+		case 5:
+			return "Druid";
+		case 6:
+			return "Assassin";
+		default:
+			return "Undefined";
+		}
+	}
+
+	private String getDifficulty(byte[] difficultyBytes) {
+		for (int i = 0; i < 3; i++) {
+			if (difficultyBytes[i] == 0) {
+				continue;
+			} else {
+				switch (i) {
+				case 0:
+					difficulty = "Normal";
+					return this.getAct(difficulty, difficultyBytes[i]);
+				case 1:
+					difficulty = "Nightmare";
+					return this.getAct(difficulty, difficultyBytes[i]);
+				case 2:
+					difficulty = "Hell";
+					return this.getAct(difficulty, difficultyBytes[i]);
+				}
+			}
+		}
+
+		return "Undefined";
+	}
+
+	private String getAct(String difficulty, byte b) {
+		switch (b + 128) {
+		case 0:
+			return difficulty + " (Act 1)";
+		case 1:
+			return difficulty + " (Act 2)";
+		case 2:
+			return difficulty + " (Act 3)";
+		case 3:
+			return difficulty + " (Act 4)";
+		case 4:
+			return difficulty + " (Act 5)";
+		}
+		return difficulty;
 	}
 
 	public boolean replaceMapID(int newMapID) {
@@ -31,29 +156,29 @@ public class D2CharFile {
 	}
 
 	private boolean writeNewMapID(int newMapID) {
-		try {
-			RandomAccessFile charRAF = new RandomAccessFile(this.charFile, "rw");
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		buffer.putInt(newMapID);
+		buffer.flip();
 
-			charRAF.seek(171L);
-			charRAF.writeInt(newMapID);
-			charRAF.close();
-
+		try (FileChannel fileChannel = FileChannel.open(charFile.toPath(), StandardOpenOption.WRITE)) {
+			fileChannel.position(171L);
+			fileChannel.write(buffer);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
 	private boolean writeNewChecksum() {
-		try {
-			RandomAccessFile charRAF = new RandomAccessFile(this.charFile, "rw");
-
-			charRAF.seek(12L);
-			charRAF.writeInt(this.recalculateChecksum());
-			charRAF.close();
-
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		buffer.putInt(this.recalculateChecksum());
+		buffer.flip();
+		
+		try (FileChannel fileChannel = FileChannel.open(charFile.toPath(), StandardOpenOption.WRITE)) {
+			fileChannel.position(12L);
+			fileChannel.write(buffer);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
