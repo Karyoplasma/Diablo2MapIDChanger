@@ -1,0 +1,7 @@
+.settings
+*.prefs
+bin
+*.class
+miglayout15-swing.jar
+miglayout-src.zip
+D2MapChanger.ini
