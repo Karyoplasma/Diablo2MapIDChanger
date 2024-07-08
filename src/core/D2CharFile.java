@@ -150,7 +150,6 @@ public class D2CharFile {
 	public boolean replaceMapID(int newMapID) {
 		this.mapID = newMapID;
 		boolean mapSuccess = this.writeNewMapID(newMapID);
-		this.checksum = this.recalculateChecksum();
 		boolean checksumSuccess = this.writeNewChecksum();
 		return mapSuccess && checksumSuccess;
 	}
@@ -173,9 +172,12 @@ public class D2CharFile {
 
 	private boolean writeNewChecksum() {
 		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-		buffer.putInt(this.recalculateChecksum());
+
+		int newChecksum = this.recalculateChecksum();
+		this.checksum = newChecksum;
+		buffer.putInt(newChecksum);
 		buffer.flip();
-		
+
 		try (FileChannel fileChannel = FileChannel.open(charFile.toPath(), StandardOpenOption.WRITE)) {
 			fileChannel.position(12L);
 			fileChannel.write(buffer);
@@ -225,8 +227,20 @@ public class D2CharFile {
 		return this.charFile;
 	}
 
+	public int getMapIDReverse() {
+		return Integer.reverseBytes(mapID);
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("%s - %s", this.name, this.charClass);
+	}
+
+	public int getMapID() {
+		return mapID;
 	}
 }

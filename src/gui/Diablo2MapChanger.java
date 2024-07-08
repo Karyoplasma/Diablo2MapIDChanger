@@ -5,15 +5,21 @@ import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import actions.D2MapIDChangerListSelectionListener;
+
+import actions.CopyToClipboardMenuAction;
 import actions.EditButtonAction;
 import actions.SelectButtonAction;
 import core.D2CharFile;
 import core.D2SaveFileDirectoryBrowser;
 import core.IniFileReader;
 import core.IniFileWriter;
+import listeners.CharacterListMouseAdapter;
+import listeners.D2MapIDChangerListSelectionListener;
+
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -21,21 +27,26 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 public class Diablo2MapChanger {
 
 	private JFrame frmDsMapidChanger;
 	private JTextArea textAreaCharacterSummary;
 	private JList<D2CharFile> listCharacterList;
-	private JLabel lblSavePath;
+	private JLabel lblSavePath, contextMenuTitle;
 	private JButton btnSelect;
 	private String savePathString;
 	private boolean autoBackup;
 	private JCheckBox chckbxAutoBackup;
+	private JPopupMenu contextMenu;
+	private JMenu transferMenu;
 
 	/**
 	 * Launch the application.
@@ -72,11 +83,24 @@ public class Diablo2MapChanger {
 		frmDsMapidChanger.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmDsMapidChanger.getContentPane().setLayout(new MigLayout("", "[][grow][200px:n,fill]", "[][][grow][][]"));
 
+		contextMenu = new JPopupMenu();
+		contextMenu.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contextMenuTitle = new JLabel();
+		contextMenuTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
+		contextMenuTitle.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		contextMenu.add(contextMenuTitle);
+		contextMenu.addSeparator();
+		JMenuItem menuItemEdit = new JMenuItem(new CopyToClipboardMenuAction(this));
+		transferMenu = new JMenu("Transfer to:");
+		contextMenu.add(menuItemEdit);
+		contextMenu.add(transferMenu);
+
 		JScrollPane scrollPaneCharList = new JScrollPane();
 		frmDsMapidChanger.getContentPane().add(scrollPaneCharList, "cell 0 0 2 4,grow");
 
 		listCharacterList = new JList<D2CharFile>(new DefaultListModel<D2CharFile>());
 		listCharacterList.addListSelectionListener(new D2MapIDChangerListSelectionListener(this));
+		listCharacterList.addMouseListener(new CharacterListMouseAdapter(this));
 		listCharacterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPaneCharList.setViewportView(listCharacterList);
 
@@ -131,7 +155,7 @@ public class Diablo2MapChanger {
 			try {
 				D2CharFile charFile = new D2CharFile(file);
 				((DefaultListModel<D2CharFile>) this.listCharacterList.getModel()).addElement(charFile);
-				
+
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(this.frmDsMapidChanger, "Error when parsing character files.",
 						"Parse error", JOptionPane.ERROR_MESSAGE);
@@ -186,6 +210,18 @@ public class Diablo2MapChanger {
 
 	public JCheckBox getChckbxAutoBackup() {
 		return chckbxAutoBackup;
+	}
+
+	public JLabel getContextMenuTitleLabel() {
+		return contextMenuTitle;
+	}
+
+	public JPopupMenu getContextMenu() {
+		return contextMenu;
+	}
+
+	public JMenu getTransferMenu() {
+		return transferMenu;
 	}
 
 }

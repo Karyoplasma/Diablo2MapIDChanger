@@ -27,6 +27,7 @@ public class EditButtonAction extends AbstractAction {
 		D2CharFile selectedCharFile = this.gui.getListCharacterList().getSelectedValue();
 		Integer newMapSeed = this.getNewMapSeed();
 		if (newMapSeed != null) {
+			newMapSeed = Integer.reverseBytes(newMapSeed);
 			if (selectedCharFile != null) {
 				if (this.gui.getChckbxAutoBackup().isSelected()) {
 					if (this.backupCharacter(selectedCharFile.getFile())) {

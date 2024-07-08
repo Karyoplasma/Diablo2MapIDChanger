@@ -71,7 +71,7 @@ public class SelectButtonAction extends AbstractAction {
 				}
 			}
 		}
-		
+
 		if (!IniFileWriter.writeNewIniFile(this.gui)) {
 			JOptionPane.showMessageDialog(this.gui.getFrame(),
 					"Error when saving your settings. Default settings have not been changed.", "Ini write error",

@@ -21,9 +21,9 @@ public class IniFileReader {
 
 	private Map<String, String> readSettings() {
 		Map<String, String> settingsMap = new HashMap<String, String>();
-		try (BufferedReader reader = Files.newBufferedReader(this.iniFile.toPath())){
+		try (BufferedReader reader = Files.newBufferedReader(this.iniFile.toPath())) {
 			String in;
-			
+
 			while (!((in = reader.readLine()) == null)) {
 				String[] inSplit = in.split("=");
 				if (inSplit.length != 2) {

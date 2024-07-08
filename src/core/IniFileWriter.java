@@ -15,7 +15,8 @@ public class IniFileWriter {
 
 	public static boolean createDefaultIniFile() {
 		File iniFile = new File("D2MapChanger.ini");
-		try (BufferedWriter writer = Files.newBufferedWriter(iniFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)){
+		try (BufferedWriter writer = Files.newBufferedWriter(iniFile.toPath(), StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING)) {
 			writer.write("SavePath=");
 			writer.newLine();
 			writer.write("AutoBackup=1");
@@ -28,7 +29,8 @@ public class IniFileWriter {
 
 	public static boolean writeNewIniFile(Diablo2MapChanger gui) {
 		File iniFile = new File("D2MapChanger.ini");
-		try (BufferedWriter writer = Files.newBufferedWriter(iniFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(iniFile.toPath(), StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING)) {
 			writer.write("SavePath=");
 			writer.write(gui.getSavePathString());
 			writer.newLine();
