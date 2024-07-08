@@ -9,4 +9,4 @@ The auto-backup never failed me, but if you want to be extra safe, create your o
 
 A neat little side-effect of the routine the map changer uses is that it will fix characters with a bad checksum, so if you get a "Generic bad file" message in D2, try changing the character's map seed with this tool. If a bad checksum was the culprit, it will fix the issue.
 
-Permanent link to latest release: https://github.com/Karyoplasma/Diablo2MapIDChanger/latest
+Permanent link to latest release: https://github.com/Karyoplasma/Diablo2MapIDChanger/releases/latest
