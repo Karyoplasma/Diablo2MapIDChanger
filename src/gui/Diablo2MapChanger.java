@@ -91,7 +91,7 @@ public class Diablo2MapChanger {
 		contextMenu.add(contextMenuTitle);
 		contextMenu.addSeparator();
 		JMenuItem menuItemEdit = new JMenuItem(new CopyToClipboardMenuAction(this));
-		transferMenu = new JMenu("Transfer to:");
+		transferMenu = new JMenu("Transfer map to:");
 		contextMenu.add(menuItemEdit);
 		contextMenu.add(transferMenu);
 
