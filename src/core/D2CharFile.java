@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 
 public class D2CharFile {
@@ -188,6 +190,81 @@ public class D2CharFile {
 		return true;
 	}
 
+	public D2CharFile renameCharacter(String name) {
+		// copy all character files
+		try {
+			this.copyRelatedFiles(this.charFile.toPath(), name);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		// change name of new character
+		File dir = this.getFile().getParentFile();
+		D2CharFile renamed = null;
+		try {
+			renamed = new D2CharFile(new File(dir + "\\" + name + ".d2s"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (renamed == null) {
+			return null;
+		}
+		
+		ByteBuffer buffer = ByteBuffer.allocate(16);
+		byte[] nameBytes = name.getBytes();
+
+		for (int i = 0; i < Math.min(nameBytes.length, 16); i++) {
+			buffer.put(nameBytes[i]);
+		}
+
+		for (int i = nameBytes.length; i < 16; i++) {
+			buffer.put((byte) 0x00);
+		}
+
+		buffer.flip();
+		
+		try (FileChannel fileChannel = FileChannel.open(renamed.getFile().toPath(), StandardOpenOption.WRITE)){
+			fileChannel.position(20L);
+			fileChannel.write(buffer);		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		renamed.name = name;
+		renamed.writeNewChecksum();
+		return renamed;
+	}
+
+	private void copyRelatedFiles(Path originalFile, String newName) throws IOException {
+		Path originalDir = originalFile.getParent();
+		String originalBaseName = this.getName();
+
+		Path newD2SFile = originalDir.resolve(newName + ".d2s");
+		Path newKeyFile = originalDir.resolve(newName + ".key");
+		Path newD2XFile = originalDir.resolve(newName + ".d2x");
+		Path newMapFile = originalDir.resolve(newName + ".map");
+
+		this.copyFile(originalDir.resolve(originalBaseName + ".d2s"), newD2SFile);
+		this.copyFile(originalDir.resolve(originalBaseName + ".key"), newKeyFile);
+		this.copyFile(originalDir.resolve(originalBaseName + ".d2x"), newD2XFile);
+		this.copyFile(originalDir.resolve(originalBaseName + ".map"), newMapFile);
+
+		for (int i = 0; i < 4; i++) {
+			Path originalMAFile = originalDir.resolve(originalBaseName + ".ma" + i);
+			Path newMAFile = originalDir.resolve(newName + ".ma" + i);
+			if (Files.exists(originalMAFile)) {
+				this.copyFile(originalMAFile, newMAFile);
+			}
+		}
+	}
+
+	private void copyFile(Path sourceFile, Path targetFile) throws IOException {
+		if (Files.exists(sourceFile)) {
+			Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
+
 	private int recalculateChecksum() {
 		int checksum = 0;
 		try {
@@ -230,11 +307,11 @@ public class D2CharFile {
 	public int getMapIDReverse() {
 		return Integer.reverseBytes(mapID);
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("%s - %s", this.name, this.charClass);

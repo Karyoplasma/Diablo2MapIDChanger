@@ -13,6 +13,7 @@ import javax.swing.ListSelectionModel;
 import actions.CopyToClipboardMenuAction;
 import actions.EditButtonAction;
 import actions.SelectButtonAction;
+import actions.RenameButtonAction;
 import core.D2CharFile;
 import core.D2SaveFileDirectoryBrowser;
 import core.IniFileReader;
@@ -47,6 +48,7 @@ public class Diablo2MapChanger {
 	private JCheckBox chckbxAutoBackup;
 	private JPopupMenu contextMenu;
 	private JMenu transferMenu;
+	private JButton btnRename;
 
 	/**
 	 * Launch the application.
@@ -103,6 +105,10 @@ public class Diablo2MapChanger {
 		listCharacterList.addMouseListener(new CharacterListMouseAdapter(this));
 		listCharacterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPaneCharList.setViewportView(listCharacterList);
+		
+		btnRename = new JButton(new RenameButtonAction(this));
+		btnRename.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		frmDsMapidChanger.getContentPane().add(btnRename, "cell 2 1,alignx center,aligny center");
 
 		JScrollPane scrollPaneSummary = new JScrollPane();
 		frmDsMapidChanger.getContentPane().add(scrollPaneSummary, "cell 2 2,grow");
